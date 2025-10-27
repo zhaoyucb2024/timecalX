@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>时间计算器 - 日期间隔天数</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .instructions {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.8;
+            color: #856404;
+        }
+
+        .instructions p {
+            margin: 8px 0;
+        }
+
+        .instructions strong {
+            color: #664d03;
+        }
+
+        .instructions a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 1px solid #667eea;
+            transition: all 0.3s;
+        }
+
+        .instructions a:hover {
+            color: #764ba2;
+            border-bottom-color: #764ba2;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="date"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: #f9f9f9;
+        }
+
+        input[type="date"]:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .add-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .add-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .calculate-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .reset-btn {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .reset-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .date-range-card {
+            background: #f9f9f9;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .date-range-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 16px;
+        }
+
+        .delete-btn {
+            background: #FF0000;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+            white-space: nowrap;
+            width: auto;
+            max-width: 70px;
+        }
+
+        .delete-btn:hover {
+            background: #CC0000;
+            transform: scale(1.05);
+        }
+
+        .date-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .date-range-result {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+            text-align: center;
+            color: #667eea;
+            font-weight: 600;
+            display: none;
+        }
+
+        .date-range-result.show {
+            display: block;
+        }
+
+        @media (max-width: 480px) {
+            .date-inputs {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .result {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .result-number {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .result-text {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .result-detail {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⏰ 居留时间计算器</h1>
+        <p class="subtitle">适用于例如华侨生的居留时间统计</p>
+
+        <div class="instructions">
+            <p><strong>1、</strong>根据华侨生联考招生规定，持有海外永居/长居的考生需满足考前18个月或540天居留时间；持有合法居留签证的考生需满足考前30个月或900天居留时间要求。</p>
+            <p><strong>2、</strong>居留时间间隔是否包含当日请参考具体规定，本计算器只计算一般情况。</p>
+            <p><strong>3、</strong>具体咨询请点击：<a href="https://www.orviews.com/" target="_blank">景于行港澳台华侨联考</a></p>
+        </div>
+
+        <div id="dateRanges">
+            <!-- 日期段将动态添加到这里 -->
+        </div>
+
+        <div class="button-group">
+            <button class="add-btn" onclick="addDateRange()">➕ 新增日期段</button>
+        </div>
+
+        <div class="button-group">
+            <button class="calculate-btn" onclick="calculateTotalDays()">✓ 计算总天数</button>
+            <button class="reset-btn" onclick="resetAll()">重置全部</button>
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <div class="result" id="result">
+            <div class="result-text">累计停留</div>
+            <div class="result-number" id="totalDays">0</div>
+            <div class="result-text">天</div>
+            <div class="result-detail" id="resultDetail"></div>
+        </div>
+    </div>
+
+    <script>
+        let rangeCounter = 0;
+
+        // 页面加载时添加第一个日期段
+        window.onload = function() {
+            addDateRange();
+        };
+
+        function addDateRange() {
+            rangeCounter++;
+            const dateRangesDiv = document.getElementById('dateRanges');
+            
+            const rangeCard = document.createElement('div');
+            rangeCard.className = 'date-range-card';
+            rangeCard.id = `range-${rangeCounter}`;
+            
+            rangeCard.innerHTML = `
+                <div class="card-header">
+                    <span class="card-title">📅 日期段 ${rangeCounter}</span>
+                    <button class="delete-btn" onclick="deleteRange(${rangeCounter})">🗑️ 删除</button>
+                </div>
+                <div class="date-inputs">
+                    <div class="input-group">
+                        <label>入境日期</label>
+                        <input type="date" id="start-${rangeCounter}" class="start-date">
+                    </div>
+                    <div class="input-group">
+                        <label>出境日期</label>
+                        <input type="date" id="end-${rangeCounter}" class="end-date">
+                    </div>
+                </div>
+                <div class="date-range-result" id="result-${rangeCounter}"></div>
+            `;
+            
+            dateRangesDiv.appendChild(rangeCard);
+            
+            // 隐藏错误和总结果
+            document.getElementById('error').classList.remove('show');
+            document.getElementById('result').classList.remove('show');
+        }
+
+        function deleteRange(id) {
+            const rangeCard = document.getElementById(`range-${id}`);
+            if (rangeCard) {
+                rangeCard.remove();
+            }
+            
+            // 如果没有日期段了，自动添加一个
+            const remainingRanges = document.querySelectorAll('.date-range-card');
+            if (remainingRanges.length === 0) {
+                addDateRange();
+            }
+            
+            // 清除结果
+            document.getElementById('result').classList.remove('show');
+        }
+
+        function calculateTotalDays() {
+            const errorDiv = document.getElementById('error');
+            const resultDiv = document.getElementById('result');
+            
+            // 清除之前的错误和结果
+            errorDiv.classList.remove('show');
+            resultDiv.classList.remove('show');
+            
+            const ranges = document.querySelectorAll('.date-range-card');
+            let totalDays = 0;
+            let validRanges = 0;
+            let details = [];
+            
+            ranges.forEach((range, index) => {
+                const rangeId = range.id.split('-')[1];
+                const startInput = document.getElementById(`start-${rangeId}`);
+                const endInput = document.getElementById(`end-${rangeId}`);
+                const resultSpan = document.getElementById(`result-${rangeId}`);
+                
+                // 隐藏之前的结果
+                resultSpan.classList.remove('show');
+                
+                if (startInput.value && endInput.value) {
+                    const start = new Date(startInput.value);
+                    const end = new Date(endInput.value);
+                    
+                    if (end < start) {
+                        errorDiv.textContent = `日期段 ${index + 1}: 出境日期不能早于入境日期`;
+                        errorDiv.classList.add('show');
+                        return;
+                    }
+                    
+                    const timeDiff = end - start;
+                    const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) + 1; // +1 包含首尾两天
+                    
+                    totalDays += daysDiff;
+                    validRanges++;
+                    
+                    // 显示单个日期段的结果
+                    resultSpan.textContent = `停留 ${daysDiff} 天`;
+                    resultSpan.classList.add('show');
+                    
+                    details.push(`第 ${index + 1} 段: ${daysDiff} 天`);
+                }
+            });
+            
+            if (validRanges === 0) {
+                errorDiv.textContent = '请至少填写一个完整的日期段';
+                errorDiv.classList.add('show');
+                return;
+            }
+            
+            // 显示总结果
+            document.getElementById('totalDays').textContent = totalDays;
+            
+            // 显示详细信息
+            const weeks = Math.floor(totalDays / 7);
+            const remainingDays = totalDays % 7;
+            const months = Math.floor(totalDays / 30);
+            const years = Math.floor(totalDays / 365);
+            
+            let detailText = `共 ${validRanges} 段停留记录<br>`;
+            
+            if (years > 0) {
+                detailText += `约 ${years} 年 `;
+            }
+            if (months > 0 && years === 0) {
+                detailText += `约 ${months} 个月 `;
+            }
+            if (weeks > 0) {
+                detailText += `${weeks} 周`;
+                if (remainingDays > 0) {
+                    detailText += ` ${remainingDays} 天`;
+                }
+            }
+            
+            document.getElementById('resultDetail').innerHTML = detailText;
+            resultDiv.classList.add('show');
+        }
+
+        function resetAll() {
+            // 清除所有日期段
+            const dateRangesDiv = document.getElementById('dateRanges');
+            dateRangesDiv.innerHTML = '';
+            
+            // 重置计数器
+            rangeCounter = 0;
+            
+            // 添加第一个日期段
+            addDateRange();
+            
+            // 清除错误和结果
+            document.getElementById('error').classList.remove('show');
+            document.getElementById('result').classList.remove('show');
+        }
+
+        // 按回车键计算
+        document.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                calculateTotalDays();
+            }
+        });
+    </script>
+</body>
+</html>
